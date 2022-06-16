@@ -37,7 +37,6 @@ let [result , setResult] = useState("");
         showCancelButton: true,
         confirmButtonText: 'Yes',
       }).then((result) => {
-        /* Read more about isConfirmed, isDenied below */
         if (result.isConfirmed) {
           let tempList = [...itemList];
       setItemList(tempList.filter(element =>{
