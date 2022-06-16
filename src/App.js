@@ -4,7 +4,9 @@ import './App.css';
 import { ListGroup,Form,InputGroup } from "react-bootstrap";
 import Swal from "sweetalert2";
 
-const App=()=> {
+
+
+const App =()=> {
   let itemListInitial = [ 
     {taskName: "Work" , status: true} , 
     {taskName: "Meeting" , status: true} , 
@@ -13,11 +15,11 @@ const App=()=> {
     {taskName: "Sleep" , status: true} 
     ]
 
-  let [itemList , setItemList] = useState (itemListInitial);
-  let [result , setResult] = useState("");
+let [itemList , setItemList] = useState (itemListInitial);
+let [result , setResult] = useState("");
 
-  const onItemClick =(index)=>{
-    //Add new task
+  const onItemClick =(index,operation)=>{
+    if(operation === 1){
       let tempList = [...itemList];
       tempList[index].status = false;
       setItemList(tempList);
@@ -28,12 +30,30 @@ const App=()=> {
         showConfirmButton: false,
         timer: 1500
       })
+    }else{
+
+      Swal.fire({
+        title: 'Are you sure you want to delete '+itemList[index].taskName+' ?',
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+      }).then((result) => {
+        /* Read more about isConfirmed, isDenied below */
+        if (result.isConfirmed) {
+          let tempList = [...itemList];
+      setItemList(tempList.filter(element =>{
+       return element.taskName !== tempList[index].taskName
+      }));
+          Swal.fire('Deleted!', '', 'success')
+        } else if (result.isDenied) {
+          Swal.fire('Canceled!')
+        }
+      })
+    }
    
   }
 
   const onEnter =(e)=>{
     if (e.key === 'Enter') {
-      //check if input is not null
       if(e.target.value !== " " || e.target.value !== ""){
         let checkList = [...itemList];
         var checker = checkList.find(element =>(
@@ -53,15 +73,16 @@ const App=()=> {
   }
 
   return (
-    <div className='container'>
-    <InputGroup>
-      <Form.Control className="number-input" onKeyDown={onEnter} onChange={(e)=>{setResult(e.target.value)}} value={result} />
-    </InputGroup>
+      <div className='container'>
+            <InputGroup>
+              <Form.Control className="number-input" onKeyDown={onEnter} onChange={(e)=>{setResult(e.target.value)}} value={result} />
+            </InputGroup>
 
-    <ListGroup>
-      <Todolist itemList={itemList} clickFunction={onItemClick}/>
-    </ListGroup>
-</div>
+            <ListGroup>
+              <Todolist itemList={itemList} clickFunction={onItemClick}/>
+            </ListGroup>
+      </div>
+      
   );
 }
 
